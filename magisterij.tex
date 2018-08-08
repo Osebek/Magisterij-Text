@@ -134,8 +134,9 @@
 \noindent{\large
 UNIVERZA V LJUBLJANI\\[1mm]
 FAKULTETA ZA MATEMATIKO IN FIZIKO\\
-FAKULTETA ZA RAČUNALNIŠTVO IN MATEMATIKO \\[5mm]
-\program\ -- 2.~stopnja}
+FAKULTETA ZA RAČUNALNIŠTVO IN INFORMATIKO
+\\[5mm]
+\program\ \\ -- 2.~stopnja}
 % ustrezno dopolni za IŠRM
 \vfill
 
@@ -249,20 +250,16 @@ Zahvaljujem se \dots
 
 \section*{Program dela}
 \addcontentsline{toc}{section}{Program dela} % dodajmo v kazalo
-Mentor naj napiše program dela skupaj z osnovno literaturo. Na literaturo se
-lahko sklicuje kot~\cite{lebedev2009introduction}, \cite{gurtin1982introduction},
-\cite{zienkiewicz2000finite}, \cite{STtemplate}.
+
+%Mentor naj napiše program dela skupaj z osnovno literaturo. Na literaturo se
+%lahko sklicuje kot~\cite{lebedev2009introduction}, \cite{gurtin1982introduction},
+%\cite{zienkiewicz2000finite}, \cite{STtemplate}.
 
 \section*{Osnovna literatura}
 Literatura mora biti tukaj posebej samostojno navedena (po pomembnosti) in ne
 le citirana. V tem razdelku literature ne oštevilčimo po svoje, ampak uporabljamo
 okolje itemize in ukaz plancite, saj je celotna literatura oštevilčena na koncu.
-\begin{itemize}
-  \plancite{lebedev2009introduction}
-  \plancite{gurtin1982introduction}
-  \plancite{zienkiewicz2000finite}
-  \plancite{STtemplate}
-\end{itemize}
+
 
 \vspace{2cm}
 \hspace*{\fill} Podpis mentorja: \phantom{prostor za podpis}
@@ -301,6 +298,30 @@ the content and not the structure of your work.
 \pagenumbering{arabic}  % in z arabskimi številkami
 
 \section{Sorodna dela}
+\subsection{Autoenkoder}
+Ena od glavnih arhitektur na področju generativnih modelov je autoenkoder. Avtoenkoderji so sestavljeni iz dveh glavnih delov, \textbf{enkoderja} $E$ in \textbf{dekoderja} $D$. 
+Cilj enkoderja je stisniti vhodne podatke v latentno reprezentacijo manjše dimenzije, cilj dekoderja pa je iz latente reprezentacije rekonstruirati vhodne podatke. 
+Želimo torej $$ E(x) = y \text{ in } D(y) \approx x $$ 
+V splošnem se bo v procesu kodiranja in odkodiranja vedno zgodila izguba informacij, saj je latentni prostor manjše dimenzije kot vhodni podatek. Naprimer, sliko velikost 28x28 točk stisnemo v vektor velikost 10x1. 
+\\
+Nevronsko mrežo učimo tako, da želimo da je rekonstuiran podatek čim bolj podoben vhodnemu. Na prvi pogled se zdi, da je uporabnost avtoenkoderjev omejena na kompresijo podatkov, vendar obstaja velika uporabnost na področju generativnih modelov. 
+Ker je latentni prostor manjše dimenzije, prisilimo mrežo, da v latentni prostor zakodira čim več informacije in tako ohrani najpomembnejše značilke na slikah. \\
+V praksi je to koristno v namene razšumljanja slik, inpaintinga. V teh primerih mrežo naučimo da iz nepopolnih (manjkajočih, šumnatih) slik zgenerira čiste slike. 
+\\
+V najbolj enostavni obliki je autoenkoder sestavljen iz treh slojev. Vhodni sloj je polno povezav z edinim skritim slojem, ki je nato polno povezan z izhodnim slojem. 
+V praksi je najpogostejša izboljšava osnovne arhitekture  oblika z več polnopovezanimi skritimi sloji, ki se zmanjšujejo v velikosti na strani enkoderja in povečujejo na strani dekoderja. 
+Če delamo s podatki kot so slike, lahko polnopovezane sloje zamenjamo s konvolucijskimi sloji različnih velikosti. 
+\\
+Dimenzije skritih slojev in latentnega vektorja so odvisne od dimenzij vhodnih podatkov ter od tipa podatkov s katerimi delamo. Parametri modela morajo biti prilagojeni našim podatkom in cilju, ki ga želimo doseči. 
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.35\textwidth]{images/autoencoder.png}
+ \caption[Diagram najenostavnejšega autoenkoderja]{Diagram najenostavnejšega autoenkoderja}
+  \label{fig:autoencoder-diagram}
+\end{figure}
+
+
 \subsection{Generativne nasprotniške mreže}
 Generativne nasprotniške mreže so bile prvič predstavljene v članku  \cite{gangoodfellow}, kjer je predstavljen algoritem tudi podkrepljen s teoretičnimi
 dokazi. Glavna ideja algoritma je, da pomerimo generativni model proti nasprotniku, ki določa ali je generiran rezultat podoben tistemu, ki ga želimo modelirati. 
@@ -334,7 +355,11 @@ Na začetku učenja, ko je G slab, se v praksi lahko zgodi, da $D$ z lahkoto zav
 Ena od možnih razširitev omenjenih v članku je razširitev na pogojni generativni model $p(x | c)$, kar  dobimo tako, da dodamo pogoj $c$ na vhod tako generatorju kot diskriminatorju.  
 
 \subsection{Variacijski autoenkoder}
-Eden od glavnih pristopov pri generativnem strojnem učenju je uporaba variacijskih autoenkoderjev \cite{kingma2013auto}. \\
+Eden od glavnih pristopov pri generativnem strojnem učenju je uporaba variacijskih autoenkoderjev \cite{kingma2013auto}.  TI so posplošitev autoenkoderja, kjer  enkoder pogojimo da ustvarjeni latentni vektorji okvirno sledijo normalni porazdelitvi. Generiranje novih slik je torej samo vzorčenje iz  normalne porazdelitve,
+z določeno srednjo vrednostjo in standardno deviacijo, ki jo dobimo iz mreže. Vedno je potreben kompromis med rekonstrukcijsko napako in prileganjem normalni porazdelitvi. 
+Statistično gledano imamo spremenljivko $z$, katera generira $x$. Izračunali bi radi $p(z|x) = \frac{p(x|z)p(z)}{p(x)}$. Izkaše se, da je izračun te porazdelitve v praksi problematičen, zato aproksimiramo to porazdelitev z porazdelitvijo $q(z|x)$, ki ji je podobna in jo znamo izračunati. Za mero podobnosti med dvema porazdelitvama pa uporabimo KL divergenco. 
+V naslednjem delu predstavimo bolj natančno in formalno izpeljavo variacijskega autoenkoderja. 
+ \\
 Predstavljajmo si množico $ X = \{x^{(i)}\}_{i=n}^N$, ki vsebuje $N$ neodvisnih in enakomerno porazdaljenih slučajnih spremenljivk $x$. Predpostavimo, da so podatki generirani s pomočjo nekega naključnega procesa, ki vključuje slučajno spremenljivko $z$, ki pa jo ne vidimo. \\
 Ta proces je sestavljen iz dveh korakov 
 \begin{enumerate}
@@ -346,7 +371,77 @@ Predpostavimo, da $p_{\theta^*}(z)$ in $p_{\theta^*}(x|z)$ prihajata iz družine
 $p_{\theta}(z)$ in $p_{\theta}(x|z)$ in da je njihova gostota verjetnosti povsod odvedljiva glede na parametra $\theta$ in $z$.  
 V praksi so vrednosti $z^{(i)}$ ter vrednost $\theta^*$ neznane. \\
 Zanima nas rešitev, ki deluje tudi v primeru večje podatkovne množice ter kadar je intergral marginalne verjetnosti 
-$p_\theta (x) = \int p_\theta (z)p_\theta (x|z)dz$ neobladljiv ( ne moremo ga odvajati oz. izračunati) 
+$p_\theta (x) = \int p_\theta (z)p_\theta (x|z)dz$ neobladljiv ( ne moremo ga odvajati oz. izračunati) in kjer je posteriorna gostota
+$p_\theta(z|x) = p_\theta(z|x)p_\theta(z)/p_\theta(x)$ neobvladljiva. Ta dva primera, se velikokrat pojavljata prav v nevronskih mrežah z nelinearnimi skritimi sloji. 
+\\
+Pristop z variacijskimi autoenkoderji nam omogoča učinkovito ocenjevanje parametrov $\theta$, kar nam omogoča generiranje umetnih podatkov, ki so podobni naravnim. Kadar imamo neko vrednost $x$ ter izbrane parametre $\theta$, nam VAE omogoča 
+dobiti aproksimacijo latentne spremenljivke $z$. To se uporablja v namene kodiranja, kjer informacije iz $x$ zakodiramo v $z$. 
+Še ena od uporabnih lastnosti pa je aproksimiranje inference spremenljivke $x$, kar nam omogoča uporabo v smeri razšumenja, "inpaintinga" itd. 
+\\
+Uvedemo prepoznavni model $q_\phi(z|x)$, ki je aproksimacija $p_\theta(z|x)$. Izpeljali bomo metodo, ki se  $\phi$ nauči skupaj s parametri $\theta$
+Neopazovano spremenljivko $z$, si lahko predstavljamo kot zakodirano informacijo.  Zato model $q_\phi(z|x)$ imenujemo \textbf{enkoder}, saj nam glede na podatek  $x$ izračuna porazdelitev možnosti $z$, ki bi lahko generirale ta podatek. 
+Analogno bomo $p_\theta(x|z)$ imenovali \textbf{dekoder}, saj nam iz $z$ producira porazdelitev čez vrednosti $x$.  
+\\
+Izpeljemo lahko spodnjo mejo: 
+$$ \mathcal{L}(\theta,\phi,x^{(i)}) = - D_{KL}(q_\phi(z|x^{(i)})||p_\theta(z)) + \mathbb{E}_{q\phi (z|x^{(i)})}[\log{p_\theta(x^{(i)}|z)}] $$
+ki jo želimo optimizirati glede na parametre $\phi$ in $\theta$.  Zaradi velike variance gradienta, je naivna Monte Carlo metoda, za ta primer neučinkovita in potrebujemo boljšo metodo. 
+\\
+Zanima nas cenilka za  spodnjo mejo $\mathcal{L}$ in njene odvode. Upoštevajoč nekaj pogojev, ki so bolj natančno razloženi v \cite{kingma2013auto}, lahko reparametriziramo $\tilde{z} \sim q_\phi(z|x)$ z odvedljivo preslikavo šuma $\epsilon$, torej 
+$\tilde{z} = g_\phi(\epsilon,x)$, kjer velja $\epsilon \sim p(\epsilon)$.
+Sedaj lahko vpeljemo Monte Carlo aproksimacijo za pričakovano frednost neke funkcije $f(z)$, glede na $q_\phi(z|x)$. kot
+
+$$ \mathbb{E}_{q_\phi(z|x^{(i)})}[f(z)] = \mathbb{E}_{p(\epsilon)}[f(g_\phi(\epsilon,x^{(i)}))] \simeq \frac{1}{L}\sum_{l=1}^{L}f(g_\phi(\epsilon^{(l)},x^{(i)})) $$
+, kjer je $\epsilon^{(l)} \sim p(\epsilon)$. \\
+To tehniko apliciramo na naš problem in dobimo cenilko $\tilde{\mathcal{L}}^A(\theta,\phi;x^{(i)}) \simeq \mathcal{L}(\theta,\phi;x^{(i)})$  za katero velja 
+
+$$  \tilde{\mathcal{L}}^A(\theta,\phi;x^{(i)}) = \frac{1}{L} \sum_{l=1}^L \log{p_\theta (x^({i}),z^{(i,l)})}-\log{q_\phi (z^{(i,l)}|x^{(i)})} $$ kjer $$z^{(i,l)} = g_\theta(\epsilon^{(i,l)},x^{(i)})$$ in $$\epsilon^{(l)} \sim p(\epsilon)$$
+
+Velikokrat lahko $KL-divergenco$ integriramo analitično, tako da je ocena z vzorčenjem potrebna le za rekonstrukcijsko napako. $\mathbb{E}_{q\phi(z|x^{(i)})}[\log{p_\theta(x^{(i)}|z)}$. KL-divergenco si lahko predstavljamo kot regularizacijski člen $\phi$, kar nam 
+da drugo različico cenilke $ \widetilde{\mathcal{L}}^B(\theta,\phi;x^{(i)}) \simeq \mathcal{L}(\theta,\phi;x^{(i)}) $ ki je definirana kot 
+ $$ \widetilde{\mathcal{L}}^B(\theta,\phi;x^{(i)}) = - D_{KL}(q_\phi(z|x^{(i)})||p_\theta(z)) + \frac{1}{L}\sum_{l=1}^L(\log{p_\theta(x^{(i)}|z^{(i,l)}))} $$ 
+in velja $$ z^{(i,l)} = g_\phi(\epsilon^{(i,l)},x^{(i)}) \text{ in }  \epsilon^{(l)} \sim p(\epsilon)$$
+\\
+Če Iz podatkovnem množice $X$ z $N$ elementi vzorčimo po $M$ vzorcev, lahko skonstruiramo cenilko osnovano na "minibatchih": 
+ $$ \mathcal{L}(\theta,\phi;X) \simeq \widetilde{\mathcal{L}}(\theta,\phi;X^M) = \frac{N}{M}\sum_{i=1}^M \widetilde{\mathcal{L}}(\theta,\omega;x^{(i)}) $$ 
+Minibatch $X^M = \{ x^{(i)} \}_{i=1}^M$ je naključno izbran vzorec velikosti $M$ iz množice $X$.
+V psevdokodi je  algoritem predstavljen kot 
+\begin{algorithm}
+\caption{Minibatch verzija AEVB algoritma. Lahko se uporablja cenilka $\widetilde{\mathcal{L}}^A$ ali $\widetilde{\mathcal{L}}^B$ }\label{minibatch-aevb}
+\begin{algorithmic}[1]
+\State $\theta,\phi \leftarrow$  inicializacija parametrov
+\Repeat 
+	\State $X^M \leftarrow$ Naključen minibatch $M$ vzorcev iz $X$
+	\State $\epsilon \leftarrow$ Naključni vzorec šuma iz porazdelitve $p(\epsilon)$
+	\State $g \leftarrow \nabla_{\theta,\phi}\widetilde{\mathcal{L}}^M(\theta,\phi;X^M,\epsilon)$ (Gradient minibatch cenilke)
+	\State $\theta,\phi \leftarrow$ Posodobimo parametre s premikom v smeri gradienta (SGD ali ADAGRAD)	  
+\Until parametra $(\theta,\phi)$ skonvergirata \\
+\Return $\theta,\phi$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Nasprotniški autoenkoder}
+Nasprotniški autoenkoderji \cite{adverserialautoencoders} so razširitev autoenkoderjev in so po svoje zasnovi precej podobni variacijskim avtoenkoderjem.  
+Glavna razlika se pojavi v načinu zagotavljanja porazdelitve latentnega vektorja. Variacijski autoenkoder uporablja KL-divergenco kot vodilo za vodenje pravilne porazdelitve, medtem ko se
+pri nasprotniških avtoenkoderjih uporablja nasprotniško učenje, kjer želimo s pomočjo diskriminatorja doseči isti cilj. 
+\\
+Naj bo $x$ vhodni podatek, $z$ latentni vektor autoenkoderja in $p(z)$ porazdelitev kateri želimo da koda $z$ sledi. Definirajmo $q(z|x)$ kot porazdelitev enkoderja, $p(x|z)$ kot porazdelitev dekoderja, $p_d(x)$ kot porazdelitev podatkov ter 
+$p(x)$ kot porazdelitev našega modela. Enkoder definira porazdelitev $q(z)$ na latentnem vektorju kot  $$ q(z) = \int_x q(z|x)p_d(x)dx $$
+Nasprotniški autoenkoder je autoenkoder, ki je regulariziran z ujemanjem med $q(z)$ in $p(z)$. \\
+Nasprotniška mreža je zadolžena za vodenje porazdelitve $q(z)$ proti $p(z)$, medtem ko je autoenkoder zaslužen za minimiziranje rekonstrukcijske napake. 
+Velja, da je generator nasprotniške mreže tudi enkoder autoenkoderja $q(z|x)$, ki je zadolžen da prelisiči diskriminator, da ne loči med $q(z)$ in $p(z)$.
+Učenje vedno izvajamo v dveh delih, najprej učimo nasprotniško mrežo (diskriminator) in s tem regulariziramo porazdelitev latentnega vektorja. S tem se posodobi tudi generator mreže, ki je hkrati enkoder autoenkoderja tako, da bolje zmede diskriminator.  V 
+drugem koraku pa učimo autoenkoder in s tem izboljšujemo rekonstrukcijsko napako. 
+\\
+Možnih je nekaj različnih izbir za enkoder $q(z|x)$
+\begin{itemize}
+\item \textbf{Deterministični} Predpostavimo, da je $q(z|x)$ deterministična funkcija $x$-a. V tem primeru je enkoder podoben enkoderju standardnega autoenkoderja in edini vir stohastičnosti (nepredvidljivosti)  v $q(z)$ ostane učna množica $p_d(x)$.
+\item \textbf{Normalno porazdeljeni} Privzamemo, da je $q(z|x)$ normalna porazdelitev, katere srednja vrednost in varianca je dobljena iz enkoderja. Velja torej $$z_i \sim \mathcal{N}(\mu_i(x),\sigma_i(x))$$ V tem primeru stohastičnost dobimo tako iz učne množice kot iz naključnosti naravne porazdelitve.
+\item \textbf{Univerzalni aproksimator} To si predstavljamo kot posplošitev prejšne možnosti. Cilj je, da  $q(z|x)$ naučimo kot univerzalni aproksimator. Naj bo enkoder funkcija $f(x,\eta)$, ki na vhod dobi $x$ in  naključni šum $\eta$ s fiksno porazdelitvijo, potem lahko vzorčimo iz katerekoli posteriorne porazdelitve $q(z|x)$, tako da evaluiramo $f(x,\eta)$ pri različnih vzorcih 
+$\eta$. Matematično gledano, predpostavimo da velja $q(z|x,\eta)$ = $\delta(z-f(x,\eta))$ in 
+$$q(z|x) = \int_{\eta} q(z|x,\eta)p_\eta(\eta)d \eta \implies q(z) = \int_x \int_{\eta} q(z|x,\eta)p_{d}(x)p_{\eta}(\eta)d \eta dx $$ 
+Tu je stohastičnost  v $q(z)$ dobljena tako iz učne množice kot iz šuma $\eta$ na vhodu enkoderja. V tem primeru nismo več omejeni na naravno porazdelitev, ampak si lahko izberemo kakršnokoli porazdelitev želimo. 
+\end{itemize}
+  
 
 %
 %\section{Uvod}
@@ -445,10 +540,10 @@ $p_\theta (x) = \int p_\theta (z)p_\theta (x|z)dz$ neobladljiv ( ne moremo ga od
 %% okrajšati imena revij. Za pravilno sortiranje vnosov brez avtorja, uporabite
 %% polje key={ }, kot v primeru.
 %% V primeru napak ustvarite issue na GitHubu ali pišite na jure.slak@fmf.uni-lj.si.
-%\cleardoublepage                           % na desni strani
-%\phantomsection                            % da prav delujejo hiperlinki
-%\addcontentsline{toc}{section}{\bibname}   % dodajmo v kazalo
-%\bibliographystyle{fmf-sl}                 % uporabljen stil je v datoteki fmf-sl.bst, na voljo tudi angleška verzija
+\cleardoublepage                           % na desni strani
+\phantomsection                            % da prav delujejo hiperlinki
+\addcontentsline{toc}{section}{\bibname}   % dodajmo v kazalo
+\bibliographystyle{fmf-sl}                 % uporabljen stil je v datoteki fmf-sl.bst, na voljo tudi angleška verzija
 \bibliography{\literatura}                 % literatura je v datoteki, definirani na začetku
 
 % Za stvarno kazalo

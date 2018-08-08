@@ -1,0 +1,20 @@
+\begin{thebibliography}{1}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+
+\bibitem{gangoodfellow}
+I.~Goodfellow in~dr., \emph{Generative adversarial nets}, v: Advances in Neural
+  Information Processing Systems 27 (ur. Z.~Ghahramani in~dr.), Curran
+  Associates, Inc., 2014, str. 2672--2680.
+
+\bibitem{kingma2013auto}
+D.~P. Kingma in M.~Welling, \emph{Auto-encoding variational bayes}, arXiv
+  preprint arXiv:1312.6114  (2013).
+
+\bibitem{adverserialautoencoders}
+A.~Makhzani in~dr., \emph{Adversarial autoencoders}, v: International
+  Conference on Learning Representations, 2016.
+
+\end{thebibliography}
