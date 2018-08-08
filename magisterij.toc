@@ -1,0 +1,5 @@
+\select@language {slovene}
+\contentsline {section}{Program dela}{vii}{section*.3}
+\contentsline {section}{\numberline {1}Sorodna dela}{1}{section.1}
+\contentsline {subsection}{\numberline {1.1}Generativne nasprotni\IeC {\v s}ke mre\IeC {\v z}e}{1}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Variacijski autoenkoder}{2}{subsection.1.2}
