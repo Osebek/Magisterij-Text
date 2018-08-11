@@ -1,8 +1,32 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
   \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
   \urlstyle{rm}\Url}\fi
+
+\bibitem{antipov2017face}
+G.~Antipov, M.~Baccouche in J.-L. Dugelay, \emph{Face aging with conditional
+  generative adversarial networks}, v: Image Processing (ICIP), 2017 IEEE
+  International Conference on, IEEE, 2017, str. 2089--2093.
+
+\bibitem{cootes2001active}
+T.~F. Cootes, G.~J. Edwards in C.~J. Taylor, \emph{Active appearance models},
+  IEEE Transactions on Pattern Analysis \& Machine Intelligence (6) (2001)
+  681--685.
+
+\bibitem{cootes1995active}
+T.~F. Cootes in~dr., \emph{Active shape models-their training and application},
+  Computer vision and image understanding \textbf{61}(1) (1995) 38--59.
+
+\bibitem{fu2010age}
+Y.~Fu, G.~Guo in T.~S. Huang, \emph{Age synthesis and estimation via faces: A
+  survey}, IEEE transactions on pattern analysis and machine intelligence
+  \textbf{32}(11) (2010) 1955--1976.
+
+\bibitem{fu2006m}
+Y.~Fu in N.~Zheng, \emph{M-face: An appearance-based photorealistic model for
+  multiple facial attributes rendering}, IEEE Transactions on Circuits and
+  Systems for Video technology \textbf{16}(7) (2006) 830--842.
 
 \bibitem{gangoodfellow}
 I.~Goodfellow in~dr., \emph{Generative adversarial nets}, v: Advances in Neural
@@ -13,8 +37,17 @@ I.~Goodfellow in~dr., \emph{Generative adversarial nets}, v: Advances in Neural
 D.~P. Kingma in M.~Welling, \emph{Auto-encoding variational bayes}, arXiv
   preprint arXiv:1312.6114  (2013).
 
+\bibitem{liu2004image}
+Z.~Liu, Z.~Zhang in Y.~Shan, \emph{Image-based surface detail transfer}, IEEE
+  Computer Graphics and Applications \textbf{24}(3) (2004) 30--35.
+
 \bibitem{adverserialautoencoders}
 A.~Makhzani in~dr., \emph{Adversarial autoencoders}, v: International
   Conference on Learning Representations, 2016.
+
+\bibitem{radford2015unsupervised}
+A.~Radford, L.~Metz in S.~Chintala, \emph{Unsupervised representation learning
+  with deep convolutional generative adversarial networks}, arXiv preprint
+  arXiv:1511.06434  (2015).
 
 \end{thebibliography}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.1)  8 AUG 2018 16:11
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.1)  10 AUG 2018 16:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -245,9 +245,16 @@ Package: bibentry 2007/10/30 1.5 (PWD)
 )
 \bibdata{literatura}
 (./magisterij.bbl
-\bibcite{gangoodfellow}{1}
-\bibcite{kingma2013auto}{2}
-\bibcite{adverserialautoencoders}{3}
+\bibcite{antipov2017face}{1}
+\bibcite{cootes2001active}{2}
+\bibcite{cootes1995active}{3}
+\bibcite{fu2010age}{4}
+\bibcite{fu2006m}{5}
+\bibcite{gangoodfellow}{6}
+\bibcite{kingma2013auto}{7}
+\bibcite{liu2004image}{8}
+\bibcite{adverserialautoencoders}{9}
+\bibcite{radford2015unsupervised}{10}
 ) (/usr/local/texlive/2015/texmf-dist/tex/latex/filecontents/filecontents.sty
 Package: filecontents 2011/10/08 v1.3 Create an external file from within a LaT
 eX document
@@ -1971,24 +1978,24 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 (./magisterij.aux)
 \openout1 = `magisterij.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 130.
+LaTeX Font Info:    ... okay on input line 130.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 130.
+LaTeX Font Info:    ... okay on input line 130.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 130.
+LaTeX Font Info:    ... okay on input line 130.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 130.
+LaTeX Font Info:    ... okay on input line 130.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 130.
+LaTeX Font Info:    ... okay on input line 130.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 130.
+LaTeX Font Info:    ... okay on input line 130.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 130.
+LaTeX Font Info:    ... okay on input line 130.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 130.
+LaTeX Font Info:    ... okay on input line 130.
 \AtBeginShipoutBox=\box30
-Package hyperref Info: Link coloring ON on input line 129.
+Package hyperref Info: Link coloring ON on input line 130.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -1998,9 +2005,9 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count135
 )
-LaTeX Info: Redefining \ref on input line 129.
-LaTeX Info: Redefining \pageref on input line 129.
-LaTeX Info: Redefining \nameref on input line 129.
+LaTeX Info: Redefining \ref on input line 130.
+LaTeX Info: Redefining \pageref on input line 130.
+LaTeX Info: Redefining \nameref on input line 130.
 
 (./magisterij.out) (./magisterij.out)
 \@outlinefile=\write5
@@ -2069,11 +2076,11 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 147.
+LaTeX Font Info:    Try loading font information for U+msa on input line 148.
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 147.
+LaTeX Font Info:    Try loading font information for U+msb on input line 148.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -2096,7 +2103,7 @@ File: se-pdfdoc.def 2011/12/02 v1.10 stringenc: PDFDocEncoding
 ] [7] [8
 
 ]
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 291.
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 292.
 
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/t1cmtt.fd
@@ -2104,53 +2111,114 @@ File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 ) [9] [10
 
 ]
-<images/autoencoder.png, id=104, 261.97874pt x 264.99pt>
-File: images/autoencoder.png Graphic file (type png)
+Underfull \hbox (badness 10000) in paragraph at lines 303--315
 
-<use images/autoencoder.png>
-Package pdftex.def Info: images/autoencoder.png used on input line 319.
-(pdftex.def)             Requested size: 149.37958pt x 151.09842pt.
- [1pdfTeX warning (ext4): destination with the same identifier (name{figure.1})
- has been already used, duplicate ignored
+ []
 
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.330 
-       <./images/autoencoder.png>]
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 335.
- [2] [3] [4] [5]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 437.
-
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 329.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 437.
- [6]
-(./magisterij.bbl) [7
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 329.
+ [1]
+<images/cgan_architecture.png, id=152, 983.675pt x 387.4475pt>
+File: images/cgan_architecture.png Graphic file (type png)
 
-] [8
+<use images/cgan_architecture.png>
+Package pdftex.def Info: images/cgan_architecture.png used on input line 364.
+(pdftex.def)             Requested size: 298.75264pt x 117.67175pt.
+
+
+LaTeX Warning: Citation `wang2016recurrent' on page 2 undefined on input line 3
+72.
+
+
+LaTeX Warning: Citation `wang2016recurrent' on page 2 undefined on input line 3
+77.
+
+[2] [3pdfTeX warning (ext4): destination with the same identifier (name{figure.
+1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.392 Želimo torej $$
+                       E(x) = y \text{ in } D(y) \approx x $$ <./images/cgan_ar
+chitecture.png>]
+<images/autoencoder_schema.png, id=169, 513.92pt x 162.6075pt>
+File: images/autoencoder_schema.png Graphic file (type png)
+
+<use images/autoencoder_schema.png>
+Package pdftex.def Info: images/autoencoder_schema.png used on input line 396.
+(pdftex.def)             Requested size: 149.37958pt x 47.26413pt.
+
+<images/autoencoder.png, id=170, 261.97874pt x 264.99pt>
+File: images/autoencoder.png Graphic file (type png)
+
+<use images/autoencoder.png>
+Package pdftex.def Info: images/autoencoder.png used on input line 415.
+(pdftex.def)             Requested size: 149.37958pt x 151.09842pt.
+
+<images/gan_schema.png, id=174, 379.4175pt x 258.9675pt>
+File: images/gan_schema.png Graphic file (type png)
+
+<use images/gan_schema.png>
+Package pdftex.def Info: images/gan_schema.png used on input line 428.
+(pdftex.def)             Requested size: 149.37958pt x 101.95712pt.
+ [4pdfTeX warning (ext4): destination with the same identifier (name{figure.2})
+ has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.432 
+      pdfTeX warning (ext4): destination with the same identifier (name{figure.
+3}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.432 
+       <./images/autoencoder_schema.png> <./images/autoencoder.png>]
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 440.
+ [5pdfTeX warning (ext4): destination with the same identifier (name{figure.4})
+ has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.461 
+       <./images/gan_schema.png>] [6] [7] [8] [9] [10
+
+] (./magisterij.bbl
+Underfull \hbox (badness 1454) in paragraph at lines 49--52
+[]\T1/cmr/m/n/12 A. Ra-dford, L. Metz in S. Chin-tala, \T1/cmr/m/it/12 Un-su-pe
+r-vi-sed re-pre-sen-ta-tion le-ar-
+ []
+
+) [11] [12
 
 ] (./magisterij.ind)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 555.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 555.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 668.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 668.
  (./magisterij.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 555.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 555.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 668.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 668.
 Package rerunfilecheck Info: File `magisterij.out' has not changed.
-(rerunfilecheck)             Checksum: 7E460CAEC9BEFA7B9A0362D4B7F711ED;577.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 555.
+(rerunfilecheck)             Checksum: ECE816353D495CCD6F1BEEEEA25CC137;1206.
+
+
+LaTeX Warning: There were undefined references.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 668.
  ) 
 Here is how much of TeX's memory you used:
- 13071 strings out of 493089
- 179924 string characters out of 6134842
- 259672 words of memory out of 5000000
- 16259 multiletter control sequences out of 15000+600000
+ 13131 strings out of 493089
+ 181004 string characters out of 6134842
+ 263363 words of memory out of 5000000
+ 16295 multiletter control sequences out of 15000+600000
  18832 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 36i,8n,47p,945b,1972s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 36i,8n,47p,945b,2001s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
 /usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></
@@ -2172,9 +2240,9 @@ texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2015/te
 xmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb></usr/local/texlive/2015/texm
 f-dist/fonts/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2015/texmf-
 dist/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on magisterij.pdf (18 pages, 348348 bytes).
+Output written on magisterij.pdf (22 pages, 621279 bytes).
 PDF statistics:
- 262 PDF objects out of 1000 (max. 8388607)
- 41 named destinations out of 1000 (max. 500000)
- 94 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 334 PDF objects out of 1000 (max. 8388607)
+ 62 named destinations out of 1000 (max. 500000)
+ 141 words of extra memory for PDF output out of 10000 (max. 10000000)
 

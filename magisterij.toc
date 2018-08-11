@@ -1,8 +1,12 @@
 \select@language {slovene}
 \contentsline {section}{Program dela}{vii}{section*.3}
 \contentsline {section}{\numberline {1}Sorodna dela}{1}{section.1}
-\contentsline {subsection}{\numberline {1.1}Autoenkoder}{1}{subsection.1.1}
-\contentsline {subsection}{\numberline {1.2}Generativne nasprotni\IeC {\v s}ke mre\IeC {\v z}e}{2}{subsection.1.2}
-\contentsline {subsection}{\numberline {1.3}Variacijski autoenkoder}{3}{subsection.1.3}
-\contentsline {subsection}{\numberline {1.4}Nasprotni\IeC {\v s}ki autoenkoder}{5}{subsection.1.4}
-\contentsline {section}{Literatura}{7}{section*.5}
+\contentsline {subsection}{\numberline {1.1}Staranje z uporabo pogojnih generativnih nasprotni\IeC {\v s}kih mre\IeC {\v z}}{1}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Staranje z uporabo ponavljajo\IeC {\v c}ih nevronskih mre\IeC {\v z}}{3}{subsection.1.2}
+\contentsline {subsection}{\numberline {1.3}Staranje s pogojnim nasprotni\IeC {\v s}kim autoenkoderjem}{3}{subsection.1.3}
+\contentsline {section}{\numberline {2}Osnovni generativni modeli}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Autoenkoder}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Generativne nasprotni\IeC {\v s}ke mre\IeC {\v z}e}{5}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Variacijski autoenkoder}{6}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}Nasprotni\IeC {\v s}ki autoenkoder}{8}{subsection.2.4}
+\contentsline {section}{Literatura}{11}{section*.5}

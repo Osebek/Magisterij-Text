@@ -3,8 +3,12 @@
 \BOOKMARK [1][]{section*.3}{Program\040dela}{}% 3
 \BOOKMARK [1][]{abstract.1}{Povzetek}{}% 4
 \BOOKMARK [1][]{section.1}{Sorodna\040dela}{}% 5
-\BOOKMARK [2][]{subsection.1.1}{Autoenkoder}{section.1}% 6
-\BOOKMARK [2][]{subsection.1.2}{Generativne\040nasprotni\235ke\040mre\236e}{section.1}% 7
-\BOOKMARK [2][]{subsection.1.3}{Variacijski\040autoenkoder}{section.1}% 8
-\BOOKMARK [2][]{subsection.1.4}{Nasprotni\235ki\040autoenkoder}{section.1}% 9
-\BOOKMARK [1][]{section*.5}{Literatura}{}% 10
+\BOOKMARK [2][]{subsection.1.1}{Staranje\040z\040uporabo\040pogojnih\040generativnih\040nasprotni\235kih\040mre\236}{section.1}% 6
+\BOOKMARK [2][]{subsection.1.2}{\376\377\000S\000t\000a\000r\000a\000n\000j\000e\000\040\000z\000\040\000u\000p\000o\000r\000a\000b\000o\000\040\000p\000o\000n\000a\000v\000l\000j\000a\000j\000o\001\015\000i\000h\000\040\000n\000e\000v\000r\000o\000n\000s\000k\000i\000h\000\040\000m\000r\000e\001\176}{section.1}% 7
+\BOOKMARK [2][]{subsection.1.3}{Staranje\040s\040pogojnim\040nasprotni\235kim\040autoenkoderjem}{section.1}% 8
+\BOOKMARK [1][]{section.2}{Osnovni\040generativni\040modeli}{}% 9
+\BOOKMARK [2][]{subsection.2.1}{Autoenkoder}{section.2}% 10
+\BOOKMARK [2][]{subsection.2.2}{Generativne\040nasprotni\235ke\040mre\236e}{section.2}% 11
+\BOOKMARK [2][]{subsection.2.3}{Variacijski\040autoenkoder}{section.2}% 12
+\BOOKMARK [2][]{subsection.2.4}{Nasprotni\235ki\040autoenkoder}{section.2}% 13
+\BOOKMARK [1][]{section*.5}{Literatura}{}% 14

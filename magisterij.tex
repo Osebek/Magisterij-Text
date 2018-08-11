@@ -97,6 +97,7 @@
 \numberwithin{equation}{section}  % števec za enačbe zgleda kot (2.7) in se resetira v vsakem poglavju
 
 % Matematični ukazi
+\DeclareMathOperator*{\argminB}{argmin}
 \newcommand{\R}{\mathbb R}
 \newcommand{\N}{\mathbb N}
 \newcommand{\Z}{\mathbb Z}
@@ -298,10 +299,105 @@ the content and not the structure of your work.
 \pagenumbering{arabic}  % in z arabskimi številkami
 
 \section{Sorodna dela}
+
+Področje staranja obrazov je pred razmahom globoke učenja večinoma uporabljalo modelne pristope \cite{fu2010age}. S pomočjo modeliranja strukture človeškega obraza in povezane anatomije se je želelo simulirati vplive staranja na človeški videz. 
+Kot predpogoj potrebujemo način za modeliranje človeškega obraza in njegovih mimik. Veliko raziskovalnega dela v tej smeri pride iz področja animacije.  Ločimo tri glavne vrste modelov in sicer \textbf{geometrične, image-based,appearance-based}. 
+\\Pri geometričnih modelih ustvarimo mrežo ključnih točk na človeškem obrazu. S transformacijami nad temi točkami pa lahko simuliramo mimiko in staranje. Potrebujemo način, ki nam ob transformacij še vedno ohrani osnovno strukturo objekta. 
+Za to obstaja  več pristopov, eden od najbolj znanih pa je predstavljen v  \cite{cootes1995active}, in se tudi uporablja na podrčju zaznave ključnih točk na obrazu. 
+\\
+Slikovno osnovani modeli se trudijo ustvariti fotorealistične slike na podlagi drugih slik. Eden od primerov je prenos teksture iz ene slike na drugo s pomočjo precesiranja slikovnih signalov in geometričnega modeliranja \cite{liu2004image}. 
+Podobne tehnike osnovane na prenašanju lastnostni iz prototipnega obraza se uporabljajo za prenos osvetlitve, izraza in starosti \cite{fu2006m}.
+\\
+Izgledni modeli  za razliko od prejšnjih dveh uporabljajo statistično učenje za izgradnjo modela. V večini primerov se iz velike baze podatkov zgradi generični prototipni model.   Uporablja se tAAM model \cite{cootes2001active}, ki ga s pomočjo učne množice naučimo
+statistični model obraza. 
+ \textbf{TUKAJ NADALJUJ --- PLACEHOLDER, KER NEVEM KAKO BI TO ZASTAVU} 
+ \\
+ 
+ Za razliko od zgoraj opisanih pristopov pa modernejši pristopi uporabljajo nevronske mreže za dosego istih ciljev.  Z uporabo generativnih model želimo učenje statističnega modela stranja prepustiti nevronski mreži, ki se na osnovi večje baze fotografij oseb različnih starosti 
+ sama nauči kako poteka staranje človeškega obraza. 
+\subsection{Staranje z uporabo pogojnih generativnih nasprotniških mrež}
+ 
+Eden od pristopov, opisan v \cite{antipov2017face}, simulira staranje s pomočjo \textbf{pogojne  generativne  nasprotniške mreže}. 
+Glavna ideja razdeli postopek na tri dele
+\begin{enumerate}
+\item Naučimo pogojno generativno nasprotniško mrežo
+\item Glede na podano sliko $x$ starosti $y_0$, poišči latentni vektor $z^*$ pri katerem generator zgenerira sliko, ki je najbolj podobna podani. Torej želimo minimizirati razliko med $x$ in $\hat{x} = G(z^*,y_0)$
+\item Staranje dosežemo tako, da generatorju ob optimalnem vektorju $z^*$ namesto originalne starosti podamo ciljno starost $y_{cilj}$, torej $x_{cilj} = G(z^*,y_{cilj})$. 
+\end{enumerate}
+Zelo pomembna je informacija o arhitekturi nevronske mreže, ki nam generira slike. Tukaj se znotraj mreže uporabljajo konvolucijski sloji v generatorju in dekonvolucije v diskimnatorju. Za doseganje stabilnosti učenja je priporočeno upoštevanje nekaterih osnovih smernic \cite{radford2015unsupervised}
+\begin{itemize}
+\item Vse pooling layerji (?) zamenjamo s koračnimi konvolucijami v diskriminatorju in obratno koračnimi (fractional strided) konvolucijami v generatorju
+\item Paketna normalizacijo uporabljamo tako v generatorju kot v diskriminatorju
+\item Pri bolj globokih arhitekturah ne smemo uporabljati polno povezanih slojev
+\item V generatorju uporabljamo ReLU aktivacijski funkcijo v vseh slojih, razen v zadnjem
+\item V diskriminatroju za vse sloje uporabljamo LeakyReLU aktivacijsko funkcijo
+\end{itemize} 
+
+V tem primeru generator na vhod sprejme vektor šuma $z$ dimenzije 100x1. Nato ga s pomočjo polnopovezanega  sloja in preoblikovanja  razširi na dimenzijo 1024x4x4, katero nato s pomočjo zaporedja obratno koračnih kovolucij spremenimo v dimenzijo slike, ki je 64x64x3. 
+To je najbolje vidno na sliki \ref{fig:agecgan-generator}, ki nazorno prikaže arhitekturo. 
+\\ 
+Oblika diskriminatorja je simetrična tej, z razliko da  namesto obratno koračnih, uporabljamo koračne kovolucije z velikostjo  koraka 2. Ločite se tudi v tem, da je zadnji sloj v diskriminatorju  polnopovezan z velikostjo 1,
+saj je cilj samo vračanje enega bita informacije.
+\\
+V drugem koraku želimo gelde na podano sliki $x$ starosti $y_o$ poiskati latentni vektor, ki ustvari sliko $\hat(x)$, ki je najboljši približek podani sliki $x$.  
+V nasprotju z autoenkoderji, nam generativne nasprotniške mreže ne podajo možnosti za preslikavo slike $x$ z atributi $y$ v latentni vektor $z$. 
+Imamo torej definirano preslikavo $f: (z,y) \mapsto x$ želimo pa dobiti preslikavo $f^{-1}: (x,y) \mapsto z$
+\\
+To lahko rešimo tako da naučimo enkoder $E$, nevronska mrežo zadolženo za  aproksimiranje $f^{-1}$.  
+Najprej ustvarimo sintetično množico sto tisoč parov $(x_i,G(z_i,y_i))$, kjer so $z_i \sim N(0,I)$ naključni latentni vektorji ter $y_i \sim U$  enakomerno naključno izbrane oznake starostnih skupin. $G(z_i,y_i)$ je na učni množici obrazov in starostni 
+naučena pogojna nasprotniška generativna mreža (CGAN). Enkoder je naučen tako, da minimiziramo evklidsko razdaljo med aproksimiranimi latentnimi vektorji $E(x_i)$ in $z_i$, kjer je $x_i = G(z_i,y_i)$
+\\
+Dobljeni rezultat je aproksimacija, ki jo želimo še dodatno izboljšati z uporabo optimizacijskih algoritmov. 
+Cilj je minimizirati razdaljo med $x$ in $\hat(x)$.  Rezultati se precej razlikujejo odvisno od izbrane mere razdalje. 
+Najenostavnejši pristop je uporaba evklidkse razdalje na razliki med slikovnimi točkami. 
+Težava nastane, ker metoda gleda razlike med posameznimi piksli, ki velikokrat nimajo vpliva na ohranjanje identitete. Optimizacijska metoda npr. optimizira razlike v ozadju, frizuri ipd, čeprav bi želeli da se identiteti oseb čim bolj približati. 
+Pomanjkljivost je tudi to, da nam slike zabriše. 
+\\
+Alternativni način je uporaba optimizacije ki ohranja identitete. Če imamo nevronsko mrežo $FR$  naučeno v namene razpoznave obrazov, lahko definiramo razdaljo kot razliko med reprezentacijah v tej mreži. 
+V največ primerih gledamo evklidsko razdaljo med tenzorji definiranimi znotraj enega od slojev. 
+Velja torej: 
+$$z^* =  \argminB_z = || FR(x) -  FR ( \hat{x})  ||_{L_2}$$
+
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.7\textwidth]{images/cgan_architecture}
+ \caption[Struktura generatorja uporabljenega v \cite{antipov2017face}]{Struktura generatorja uporabljenega v \cite{antipov2017face}.\\Vir: \cite{radford2015unsupervised}}
+  \label{fig:agecgan-generator}
+\end{figure}
+
+Ker sta tako generator $G(z,y)$ kot nevronska mreža $FR$ odvedljiva glede na vhodne podatke, potem se optimizacijo lahko rešuje z uporabo \textbf{L-BFGS-B} algoritma, ki mu kot začetni približek podamo vrednost $z_0$, ki smo jo dobili iz enkoderja $E$. 
+
+\subsection{Staranje z uporabo ponavljajočih nevronskih mrež}
+Klasične ponavljajoče nevronske mreže podajajo dobre rezultate, kadar se ukvarjamo z zaporednimi podatki, kjer so členi medsebojno odvisni, to pa lahko izkoristimo za simuliranje postopka staranja \cite{wang2016recurrent}
+Staranje si lahko predstavljamo kot zaporedje stanj, kjer je vsako novo stanje odvisno od prejšnjega. Starosti razdelimo na starostne skupine, cilj pa je najti prehode iz enega stanja v naslednjega. 
+Postopek je sestavljen iz dveh glavnih korakov, kjer je prvi normalizacija obraznik slik, drugi pa staranje s pomočjo mreže. 
+Pomembno je, da nam normalizacija ohrani podatke o starosti ter lepe prehode med starostnimi skupinami. 
+Za dosego tega cilja se poslužimo tehnike, kjer normaliziramo slike sosednih starostnih skupin skupaj. Uporablja se  optični tok, saj  ohrani teksturne podrobnosti na slikah.  Podrobnosti in matematična formulacija  so podrobneje predstavljene  v 
+\cite{wang2016recurrent}. 
+Ko imamo slike normalizirane, se poslužimo ponavljajoče nevronske mreže, za izvajanje postopka staranja. 
+Osnovna komponenta mreže so dvoslojna GRU (gated recurrent unit) vrata, kjer spodnji GRU zakodira vhodni obraz v skrito visokodimenzionalno reprezentacijo, ki jo zgornji del odkodira v postaran obraz. Kot našo kriterijsko funkcijo 
+določimo razliko med vhodno sliko in referenčno sliko. Uteži postopoma povečujemo tako, da ima največjo težo razlika med najstarejšo starostno skupino in referenco. S tem omogočimo bolj realne prehode med stanji.
+
+
+
+\subsection{Staranje s pogojnim nasprotniškim autoenkoderjem}
+Predpostavimo da slike oseb pri različnih starostih ležijo na mnogoterosti $\mathcal{M}$. Premikanje po tem prostoru v smeri $x$ nam spreminja identiteto osebe, medtem kjer nam premikanje v smeri $y$ spreminja
+starost. Želimo aprosimirati preslikavo med latentnim prostorom in mnogoterostjo, saj je direktna preslikava med sliko in mnogoterstjo 
+
+\section{Osnovni generativni modeli}
 \subsection{Autoenkoder}
 Ena od glavnih arhitektur na področju generativnih modelov je autoenkoder. Avtoenkoderji so sestavljeni iz dveh glavnih delov, \textbf{enkoderja} $E$ in \textbf{dekoderja} $D$. 
 Cilj enkoderja je stisniti vhodne podatke v latentno reprezentacijo manjše dimenzije, cilj dekoderja pa je iz latente reprezentacije rekonstruirati vhodne podatke. 
 Želimo torej $$ E(x) = y \text{ in } D(y) \approx x $$ 
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.35\textwidth]{images/autoencoder_schema.png}
+ \caption[Idejna shema oblike autoenkoderja]{Idejna shema oblike autoenkoderja.}
+  \label{fig:autoencoder-shape}
+\end{figure}
+
 V splošnem se bo v procesu kodiranja in odkodiranja vedno zgodila izguba informacij, saj je latentni prostor manjše dimenzije kot vhodni podatek. Naprimer, sliko velikost 28x28 točk stisnemo v vektor velikost 10x1. 
 \\
 Nevronsko mrežo učimo tako, da želimo da je rekonstuiran podatek čim bolj podoben vhodnemu. Na prvi pogled se zdi, da je uporabnost avtoenkoderjev omejena na kompresijo podatkov, vendar obstaja velika uporabnost na področju generativnih modelov. 
@@ -317,7 +413,7 @@ Dimenzije skritih slojev in latentnega vektorja so odvisne od dimenzij vhodnih p
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.35\textwidth]{images/autoencoder.png}
- \caption[Diagram najenostavnejšega autoenkoderja]{Diagram najenostavnejšega autoenkoderja}
+ \caption[Diagram najenostavnejšega autoenkoderja]{Diagram najenostavnejšega autoenkoderja.}
   \label{fig:autoencoder-diagram}
 \end{figure}
 
@@ -325,7 +421,16 @@ Dimenzije skritih slojev in latentnega vektorja so odvisne od dimenzij vhodnih p
 \subsection{Generativne nasprotniške mreže}
 Generativne nasprotniške mreže so bile prvič predstavljene v članku  \cite{gangoodfellow}, kjer je predstavljen algoritem tudi podkrepljen s teoretičnimi
 dokazi. Glavna ideja algoritma je, da pomerimo generativni model proti nasprotniku, ki določa ali je generiran rezultat podoben tistemu, ki ga želimo modelirati. 
-Predstavljamo si lahko bitko med ponarejevalcem denarja in strokovnjakom, ki določa ali je kos denarja pristen. Želimo, da oba akterja skozi iterativni nasprotniški proces izboljšujeta drug drugega. \\
+Predstavljamo si lahko bitko med ponarejevalcem denarja in strokovnjakom, ki določa ali je kos denarja pristen. Želimo, da oba akterja skozi iterativni nasprotniški proces izboljšujeta drug drugega. \\ I
+dejno shemo  mreže lahko vidimo na sliki \ref{fig:gan-diagram}. To lahko primerjamo s shemo autoenkoderja  \ref{fig:autoencoder-shape} in razlike v arhitekturi so očitne. 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.35\textwidth]{images/gan_schema.png}
+ \caption[Diagram strukture autoenkoderja ]{Generator na vhod dobi šum $z$ iz katerega zgenerira rezultat, diskriminator pa pove ali misli, da je slika iz učne množice ali ne}
+  \label{fig:gan-diagram}
+\end{figure}
+
+
 Rečemo, da sta oba  diskriminator kot generator večslojni nevronski mreži. Matematično gledano, želimo naučiti generator G, da bo proizvajal vzorce, katerih porazdelitev je podobna porazdelitvi podatkov, katere želimo modelirati. Da bi se naučili porazdelitev generatorja $p_g$ na podatkih $x$, definiramo priorni porazdelitev $p(z)$, kjer $z$ predstavlja vektor šuma.\\ Preslikavo v prostor podatkov predstavimo z $G(z;\theta_g)$, kjer je G odvedljiva funkcija, ki jo predstavlja večslojna nevronska mreža in $\theta_g$ njeni parametri.  Prav tako definiramo $D(x,\theta_d)$, katerega izhod je skalar $D(x)$ ,ki predstavlja verjetnost, da je $x$ prišel iz podatkov in ne iz  $p_g$ (torej ni bil generiran s pomočjo generatorja). Hočemo torej, da diskriminator za vhod vedno pravilno določi ali je prišel iz množice realnih podatkov oz. ali je bil generiran s pomočjo generatorja $G$. To zapišemo kot: 
 
 $$ \min_G\max_DV(D,G) = \mathbb{E}_{x \sim p_{data}(x)}[\log{D(x)}] + \mathbb{E}_{z \sim p_z(z)}[\log{(1-D(G(z)))]}$$ 
@@ -353,6 +458,7 @@ Parameter $k$ za število iteracij notranje zanke, določimo glede na eksperimen
 Na začetku učenja, ko je G slab, se v praksi lahko zgodi, da $D$ z lahkoto zavrne vse generirane vzorce, saj so očitno različni od podatkov iz učne množice. V tem primeru se vrednost $\log(1-D(G(z)))$ močno poveča in težko najdemo globalni minimum. Da se izognemo temu problemo, reformuliramo problem tako, da namesto minimizacije  $\log(1-D(G(z)))$ učimo $G$, da maksimizira $\log{D(G(z))}$. To nam omogoča. da na začetku učenja dobimo močnešje gradiente, ki omogoča boljše premike v smer optimalne rešitve. 
 \\
 Ena od možnih razširitev omenjenih v članku je razširitev na pogojni generativni model $p(x | c)$, kar  dobimo tako, da dodamo pogoj $c$ na vhod tako generatorju kot diskriminatorju.  
+
 
 \subsection{Variacijski autoenkoder}
 Eden od glavnih pristopov pri generativnem strojnem učenju je uporaba variacijskih autoenkoderjev \cite{kingma2013auto}.  TI so posplošitev autoenkoderja, kjer  enkoder pogojimo da ustvarjeni latentni vektorji okvirno sledijo normalni porazdelitvi. Generiranje novih slik je torej samo vzorčenje iz  normalne porazdelitve,
@@ -439,8 +545,15 @@ Možnih je nekaj različnih izbir za enkoder $q(z|x)$
 \item \textbf{Univerzalni aproksimator} To si predstavljamo kot posplošitev prejšne možnosti. Cilj je, da  $q(z|x)$ naučimo kot univerzalni aproksimator. Naj bo enkoder funkcija $f(x,\eta)$, ki na vhod dobi $x$ in  naključni šum $\eta$ s fiksno porazdelitvijo, potem lahko vzorčimo iz katerekoli posteriorne porazdelitve $q(z|x)$, tako da evaluiramo $f(x,\eta)$ pri različnih vzorcih 
 $\eta$. Matematično gledano, predpostavimo da velja $q(z|x,\eta)$ = $\delta(z-f(x,\eta))$ in 
 $$q(z|x) = \int_{\eta} q(z|x,\eta)p_\eta(\eta)d \eta \implies q(z) = \int_x \int_{\eta} q(z|x,\eta)p_{d}(x)p_{\eta}(\eta)d \eta dx $$ 
-Tu je stohastičnost  v $q(z)$ dobljena tako iz učne množice kot iz šuma $\eta$ na vhodu enkoderja. V tem primeru nismo več omejeni na naravno porazdelitev, ampak si lahko izberemo kakršnokoli porazdelitev želimo. 
+Tu je stohastičnost  v $q(z)$ dobljena tako iz učne množice kot iz šuma $\eta$ na vhodu enkoderja. V tem primeru nismo več omejeni na naravno porazdelitev, ampak si lahko izberemo kakršnokoli porazdelitev želimo, saj to določuje porazdelitev šuma $\eta$. 
 \end{itemize}
+
+Nasprotniški autoenkoder je mogoče razširiti v pogojno obliko kjer vsem učnim vzorcem dodelimo oznako kateremu razredu pripadajo. 
+Na vhod diskriminatorja dodamo one-hot (?) oznako, ki predstavlja razred, kateremu vzorec pripada. 
+Ko enkoder izračuna latentni vektor združimo oznako skupaj s latentnim vektorjem in to podamo dekodirnemu delu mreže. 
+
+
+
   
 
 %
