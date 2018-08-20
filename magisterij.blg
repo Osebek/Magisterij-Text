@@ -4,47 +4,48 @@ The top-level auxiliary file: magisterij.aux
 The style file: fmf-sl.bst
 Database file #1: literatura.bib
 Warning--I didn't find a database entry for "wang2016recurrent"
+Warning--I didn't find a database entry for "utkface"
 Warning--there's a number but no volume in cootes2001active
 Warning--empty pages in adverserialautoencoders
-You've used 10 entries,
+You've used 14 entries,
             2705 wiz_defined-function locations,
-            648 strings with 6452 characters,
-and the built_in function-call counts, 4906 in all, are:
-= -- 370
-> -- 183
-< -- 2
-+ -- 93
-- -- 52
-* -- 336
-:= -- 609
-add.period$ -- 10
-call.type$ -- 10
-change.case$ -- 55
+            669 strings with 7220 characters,
+and the built_in function-call counts, 6710 in all, are:
+= -- 507
+> -- 253
+< -- 3
++ -- 129
+- -- 72
+* -- 451
+:= -- 839
+add.period$ -- 14
+call.type$ -- 14
+change.case$ -- 77
 chr.to.int$ -- 0
-cite$ -- 12
-duplicate$ -- 423
-empty$ -- 431
-format.name$ -- 63
-if$ -- 1013
+cite$ -- 16
+duplicate$ -- 580
+empty$ -- 586
+format.name$ -- 87
+if$ -- 1388
 int.to.chr$ -- 0
-int.to.str$ -- 10
-missing$ -- 88
-newline$ -- 36
-num.names$ -- 22
-pop$ -- 185
+int.to.str$ -- 14
+missing$ -- 121
+newline$ -- 48
+num.names$ -- 30
+pop$ -- 256
 preamble$ -- 1
-purify$ -- 45
+purify$ -- 63
 quote$ -- 0
-skip$ -- 144
+skip$ -- 202
 stack$ -- 0
-substring$ -- 285
-swap$ -- 243
-text.length$ -- 2
+substring$ -- 380
+swap$ -- 326
+text.length$ -- 3
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 40
+type$ -- 56
 warning$ -- 2
-while$ -- 40
-width$ -- 12
-write$ -- 89
-(There were 3 warnings)
+while$ -- 54
+width$ -- 16
+write$ -- 122
+(There were 4 warnings)

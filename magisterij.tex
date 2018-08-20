@@ -367,7 +367,6 @@ $$z^* =  \argminB_z = || FR(x) -  FR ( \hat{x})  ||_{L_2}$$
 \end{figure}
 
 Ker sta tako generator $G(z,y)$ kot nevronska mreža $FR$ odvedljiva glede na vhodne podatke, potem se optimizacijo lahko rešuje z uporabo \textbf{L-BFGS-B} algoritma, ki mu kot začetni približek podamo vrednost $z_0$, ki smo jo dobili iz enkoderja $E$. 
-
 \subsection{Staranje z uporabo ponavljajočih nevronskih mrež}
 Klasične ponavljajoče nevronske mreže podajajo dobre rezultate, kadar se ukvarjamo z zaporednimi podatki, kjer so členi medsebojno odvisni, to pa lahko izkoristimo za simuliranje postopka staranja \cite{wang2016recurrent}
 Staranje si lahko predstavljamo kot zaporedje stanj, kjer je vsako novo stanje odvisno od prejšnjega. Starosti razdelimo na starostne skupine, cilj pa je najti prehode iz enega stanja v naslednjega. 
@@ -382,8 +381,39 @@ določimo razliko med vhodno sliko in referenčno sliko. Uteži postopoma poveč
 
 
 \subsection{Staranje s pogojnim nasprotniškim autoenkoderjem}
-Predpostavimo da slike oseb pri različnih starostih ležijo na mnogoterosti $\mathcal{M}$. Premikanje po tem prostoru v smeri $x$ nam spreminja identiteto osebe, medtem kjer nam premikanje v smeri $y$ spreminja
-starost. Želimo aprosimirati preslikavo med latentnim prostorom in mnogoterostjo, saj je direktna preslikava med sliko in mnogoterstjo 
+Predpostavimo da slike oseb pri različnih starostih ležijo na mnogoterosti $\mathcal{M}$. Premikanje po tem prostoru v določeni smeri nam ohrani identiteto, kljub temu da se starost spreminja. Želimo določiti 
+ preslikavo med nižjedimenzionalnim latentnim prostorom in mnogoterostjo, saj je direktna preslikava med sliko in mnogoterstjo pretežka za modeliranje. 
+ \\ 
+ Imamo sliko obraza $x$, ki jo enkoder $E$ preslika v latentno reprezentacijo $z$, ki jo nato združimo z informacijo o starosti osebe $l$. S tem dobimo točko na $\mathcal{M}$. Glavna ideja je, da sta v latentnem prostoru informaciji o identiteti $z$ in starosti $l$ ločeni. To pomeni, da lahko samo spremenimo starost in s tem ohranimo identiteto osebe. S pomočjo generatorja $G$ to preslikamo nazaj v prostor slik, ki so človeku berljive. 
+Za enkoder uporabimo konvolucijsko nevronsko mrežo, kjer se za namene downsamplinga (?) uporablja koračenje s korakom 2, kot je priporočeno v \cite{radford2015unsupervised}. Podobno velja za generator. 
+Imamo tudi dva diskriminatorja: 
+\begin{itemize}
+\item $D_z$ je povezan z enkoderjem in skrbi, da latentni vektorji $z$ sledijo normalni porazdelitvi. S tem želimo prisiliti $E$ da je latentni prostor enakomerno zapolnjen.
+\item $D_{img}$ prisili generator, da so rezultati fotorealistični, še posebej  se to vidi pri teksturi starejših obrazov.  
+\end{itemize}
+
+Pri podanem latentnem vektorju $z$ ter oznaki $l$, nam generator $G$ ustvari novo sliko $\hat{x} = G(z,l) = G(E(x),l)$. Želimo, da $\hat{x}$ leži na na $\mathbb{M}$ in ima isto identiteto kot $x$. 
+Matematično je naš  cilj  dobiti rešitev enačbe 
+$$ \min_{E,G} \mathcal{L}(x,G(E(x),l))$$. 
+ ter hkrati posrbeti, da je $z$ normalno porazdeljen ter da je kriterij diskriminatorja $D_{img}$ čim bolj izpolnjen.\\
+ Porazdelitev učnih podatkov definiramo kot $p_{data}(x)$ in porazdelitev $z$ definiramo kot $q(z|x)$. Naj bo $p(z)$ priorna porazdelitev, potem z $z^* \sim p(z)$ definiramo vzorčenje iz $p(z)$. 
+ Skupno učenje $E$ in $D_z$ predstavimo s kriterijsko funkcijo 
+ $$ \min_E \max_{D_z}\mathbb{E}_{z^* \sim p(z)}[\log{D_z(z^*)}] + \mathbb{E}_{x \sim p_{data}(x)}[log(1-D_z(E(x)))]$$.
+ Analogno lahko definiramo kriterijsko funkcijo za učenje diskrimanatorja $D_{img}$ in generatorja $G$ z oznako $l$ kot  
+ $$ \min_G \max_{D_{img}} \mathbb{E}_{x,l \sim p_{data}(x,l)}[\log{D_{img}(x,l)}] + \mathbb{E}_{x,l \sim p_{data}(x,l)}[\log(1-D_{img}(G(E(x),l)))] $$
+
+Vse skupaj sedaj seštejmo in združimo v celotno kriterijsko funkcijo sistema
+
+\begin{equation}
+\begin{aligned}
+ \min_{E,G} \max{D_z,D_{img}} \lambda \mathcal{L}(x,G(E(x),l))   \\
++ \mathbb{E}_{z^* \sim p(z)}[\log{D_z(z^*)}]  \\
++ \mathbb{E}_{x \sim p_{data}(x)}[log(1-D_z(E(x)))]   \\
++ \mathbb{E}_{x,l \sim p_{data}(x,l)}[\log{D_{img}(x,l)}]  \\ 
++ \mathbb{E}_{x,l \sim p_{data}(x,l)}[\log(1-D_{img}(G(E(x),l)))]
+\end{aligned}
+\end{equation}
+
 
 \section{Osnovni generativni modeli}
 \subsection{Autoenkoder}
@@ -432,8 +462,10 @@ dejno shemo  mreže lahko vidimo na sliki \ref{fig:gan-diagram}. To lahko primer
 
 
 Rečemo, da sta oba  diskriminator kot generator večslojni nevronski mreži. Matematično gledano, želimo naučiti generator G, da bo proizvajal vzorce, katerih porazdelitev je podobna porazdelitvi podatkov, katere želimo modelirati. Da bi se naučili porazdelitev generatorja $p_g$ na podatkih $x$, definiramo priorni porazdelitev $p(z)$, kjer $z$ predstavlja vektor šuma.\\ Preslikavo v prostor podatkov predstavimo z $G(z;\theta_g)$, kjer je G odvedljiva funkcija, ki jo predstavlja večslojna nevronska mreža in $\theta_g$ njeni parametri.  Prav tako definiramo $D(x,\theta_d)$, katerega izhod je skalar $D(x)$ ,ki predstavlja verjetnost, da je $x$ prišel iz podatkov in ne iz  $p_g$ (torej ni bil generiran s pomočjo generatorja). Hočemo torej, da diskriminator za vhod vedno pravilno določi ali je prišel iz množice realnih podatkov oz. ali je bil generiran s pomočjo generatorja $G$. To zapišemo kot: 
-
-$$ \min_G\max_DV(D,G) = \mathbb{E}_{x \sim p_{data}(x)}[\log{D(x)}] + \mathbb{E}_{z \sim p_z(z)}[\log{(1-D(G(z)))]}$$ 
+\begin{equation}
+\label{eq:gan-main}
+ \min_G\max_DV(D,G) = \mathbb{E}_{x \sim p_{data}(x)}[\log{D(x)}] + \mathbb{E}_{z \sim p_z(z)}[\log{(1-D(G(z)))]} 
+\end{equation}
 
 Psevdokoda algoritma, ki uporablja gradientni spust za implementacijo našega generativnega nasprotniškega modela, je sledeča: 
 \begin{algorithm}
@@ -500,7 +532,8 @@ $$ \mathbb{E}_{q_\phi(z|x^{(i)})}[f(z)] = \mathbb{E}_{p(\epsilon)}[f(g_\phi(\eps
 , kjer je $\epsilon^{(l)} \sim p(\epsilon)$. \\
 To tehniko apliciramo na naš problem in dobimo cenilko $\tilde{\mathcal{L}}^A(\theta,\phi;x^{(i)}) \simeq \mathcal{L}(\theta,\phi;x^{(i)})$  za katero velja 
 
-$$  \tilde{\mathcal{L}}^A(\theta,\phi;x^{(i)}) = \frac{1}{L} \sum_{l=1}^L \log{p_\theta (x^({i}),z^{(i,l)})}-\log{q_\phi (z^{(i,l)}|x^{(i)})} $$ kjer $$z^{(i,l)} = g_\theta(\epsilon^{(i,l)},x^{(i)})$$ in $$\epsilon^{(l)} \sim p(\epsilon)$$
+$$  \tilde{\mathcal{L}}^A(\theta,\phi;x^{(i)}) = \frac{1}{L} \sum_{l=1}^L \log{p_\theta (x^({i}),z^{(i,l)})}-\log{q_\phi (z^{(i,l)}|x^{(i)})} $$ kjer 
+$$z^{(i,l)} = g_\theta(\epsilon^{(i,l)},x^{(i)}) \text{ in } \epsilon^{(l)} \sim p(\epsilon)$$
 
 Velikokrat lahko $KL-divergenco$ integriramo analitično, tako da je ocena z vzorčenjem potrebna le za rekonstrukcijsko napako. $\mathbb{E}_{q\phi(z|x^{(i)})}[\log{p_\theta(x^{(i)}|z)}$. KL-divergenco si lahko predstavljamo kot regularizacijski člen $\phi$, kar nam 
 da drugo različico cenilke $ \widetilde{\mathcal{L}}^B(\theta,\phi;x^{(i)}) \simeq \mathcal{L}(\theta,\phi;x^{(i)}) $ ki je definirana kot 
@@ -552,9 +585,147 @@ Nasprotniški autoenkoder je mogoče razširiti v pogojno obliko kjer vsem učni
 Na vhod diskriminatorja dodamo one-hot (?) oznako, ki predstavlja razred, kateremu vzorec pripada. 
 Ko enkoder izračuna latentni vektor združimo oznako skupaj s latentnim vektorjem in to podamo dekodirnemu delu mreže. 
 
+\section{Preizkušeni pristopi}
+Med raziskovanjem načina za doseganje najboljših rezultatov staranja in pomlajevanja smo se poslužili različnih pristopov, ki jih bomo predstavili v tem poglavju. Predstavili bomo teoretično podlago vsakega od njih ter dosežene rezultate. Analizirali bomo pomanjkljivosti in težave pri implementaciji.  
+\\
+Za implementacijo različnih modelov, je bila uporabljena programska knjižnica \textbf{Keras 2.0.0}, ki v ozadju uporablja \textbf{Tensorflow 1.0.0}. Za doseganje enakovrednih rezultatov je verzija pomembna, saj lahko starejše ali novejše različice dajejo bistveno drugačne rezultate. 
+\\
+V vseh poizkusih, razen tam kjer je specifično navedeno drugače, smo za učno množico uporabljali bazo slik  UTKFace \cite{utkface}, ki vsebuje 20000 slik oseb različnih etničnih izvorov, spola ter starosti. Slike v bazi so obrezane ter poravnane ter vsebujejo slike oseb pri različnih osvetlitvah, obraznih mimikah ter stopnjah pokritosti. 
+
+\subsection{Pogojni Wasserstein GAN}
+Eden od prvih preizkušenih modelov je bila pogojna različica wasserstein GAN \cite{arjovsky2017wasserstein} modela. Eden od glavnih izzivov pri učenju GAN modelov je nastabilnost učenja, kar pa naj bi wassersteinova različica odpravila. 
+\subsubsection{Teoretično ozadje}
+Pri učenju generativnih modelov predpostavimo, da podatki prihajajo iz neke porazdelitve,  katere aproksimacijo $P_\theta$ se želimo naučiti.  Da to dosežemo, lahko definiramo slučajno spremenljivko $Z$, ki ima fiksno porazdelitev $p(z)$. To  lahko s pomočjo nevronske mreže (parametrične funkcije) preslikamo v novo slučajno spremenljivko, ki generira vzorce s porazdelitvijo $P_\theta$.
+$$ g_\theta : \mathcal{Z} \leftarrow \mathcal{X}$$ 
+S spreminjanjem parametrov $\theta$, lahko dosežemo da se $P_\theta$ približna porazdelitvni podatkov $P_r$. 
+Želimo izbrati pravilno metriko za definiranje  razdalje med dvema porazdelitvama. 
+Obstaja nekaj standardnih možnosti, ki jih lahko uporabimo: 
+
+\begin{itemize}
+\item \textbf{TV razdalja}
+$$ \delta(\mathbb{P}_r,\mathbb{P}_g) = \sup_{A \in \Sigma} | \mathbb{P}_r(A) - \mathbb{P}_g(A)| $$
+\item \textbf{KL divergenca}
+$$ KL(\mathbb{P}_r || \mathbb{P}_g) = \int \log{(\frac{P_r(x)}{P_g(x)})}P_r(x)d\mu(x)$$
+Kjer je največja težava asimetričnost, torej $KL(\mathbb{P}_r || \mathbb{P}_g) \neq KL(\mathbb{P}_g || \mathbb{P}_r )$ ter 
+dejstvo, da je mera neskončna, kadar velja $P_g(x) = 0$ in $P_r(x) > 0$. To nam lahko povzroča težave v začetnih fazah učenja nevronske mreže. 
+\item \textbf{Jensen-Shannon (JS) divergenca}
+$$ JS(\mathbb{P}_r,\mathbb{P}_g) = KL(\mathbb{P}_r || \mathbb{P}_m) + KL(\mathbb{P}_g || \mathbb{P}_m)$$
+kjer je $\mathbb{P}_m$ enak $\mathbb{P}_r + \mathbb{P}_g)/2$. To nam  odpravi  največje pomanjkljivosti KL divergence, saj je simetrična ter  vedno manjša od neskončnosti, saj lahko izberemo $\mu = \mathbb{P}_m$
+\item \textbf{EM oz. Wasserstein-1 razdalja}
+$$ W(\mathbb{P}_r,\mathbb{P}_g) = \inf_{\gamma \in \Pi(\mathbb{P}_r,\mathbb{P}_g) }\mathbb{E}_{(x,y) \sim \gamma} [||x-y||]$$
+kjer nam $\Pi(\mathbb{P}_r,\mathbb{P}_g)$ predstavlja množico vseh skupnih porazdelitev $\gamma(x,y)$, katerih "marginala" sta $\mathbb{P}_r$ in $\mathbb{P}_g$.  Lahko si predstavljamo kot koliko mase mora biti prestavjene da iz ene porazdelitve dobimo drugo. 
+\end{itemize}
+
+Izkaže se, da je za nas najbolj zanimiva $EM$ razdalja, saj določena enostavna zaporedja porazdelitev konvergirajo glede na to razdaljo in ne glede na druge. V tej obliki te razdalje ni mogoče izračunati, vendar po Kantarevich-Rubensteinovi dualnosti  je zgornja definicija EM razdalje ekvivalentna 
+
+$$ W(P_r,P_\theta) = \sup_{||f||_L \leq 1 } \mathbb{E}_{x \sim P_r} [f(x)] - \mathbb{E}_{x \sim P_\theta}[f(x)]$$ 
+
+kjer supremum gledamo glede na vse 1-Lipschitz funkcije. Naj bosta $d_x$ in $d_y$ funkciji razdalje definirani na prostorih $X$ in $Y$. Funkcija $f$ je \textbf{K-Lipschitzova} če $\forall x_1,x_2 \in X$ velja $d_y(f(x_1),f(x_2)) \leq Kd_X(x_1,x_2)$.
+
+Psevdokoda WGAN učenja se zapiše kot
+
+\begin{algorithm}
+\caption{WGAN algoritem.}\label{wgan-pseudo}
+\begin{algorithmic}[1]
+\Require $ \alpha $ hitrost učenja, $c$ parameter rezanja, $m$ velikost batcha, $n_{kritik}$ število iteracij kritika na število iteracij generatorja
+\Require $w_0$ začetne uteži kritika, $\theta_0$ začetne uteži generatorja
+\While{$\theta$ ne skonvergira}
+	\For{$t=0,\dots,n_{kritik}$}
+		\State Vzorči $\{x^{(i)} \}_{i=1}^m \sim \mathbb{P}_r$ iz učnih podatkov
+		\State Vzorči $\{z^{(i)} \}_{i=1}^m \sim p(z)$ iz prejšnje (prior) porazdelitve
+		\State $g_w \leftarrow \nabla_w [\frac{1}{m} \sum_{i=1}^m f_w({x^{(i)}})  - \frac{1}{m}\sum_{i=1}^m f_w (g_\theta(z^{(i)}))]$
+		\State $w \leftarrow w + \alpha \cdot \text{RMSProp}(w,g_w)$
+		\State $w \leftarrow \text{obreži}(w,-c,c)$
+	\EndFor
+	\State Vzorči $\{z^{(i)}\}_{i=1}^m \sim p(z)$ iz prejšnje (prior) porazdelitve
+	\State $g_\theta \leftarrow -\nabla_\theta \frac{1}{m} \sum_{i=1}^m f_w(g_\theta(z^{(i)}))$
+	\State $\theta \leftarrow \theta - \alpha \cdot \text{RMSProp}(\theta,g_\theta)$
+\EndWhile
+
+\end{algorithmic}
+\end{algorithm}
+
+Izkaže se \cite{arjovsky2017wasserstein}, da je za doseganje Lipschnitzovega pogoja dovolj, da funkcije obrežemo (clip) med dve možni vrednosti, ki jih nastavimo s parametrom $c$, kar moramo storiti po vsaki posodobitvi uteži $w$. 
+\subsubsection{Eksperimentalni rezultati}
+
+Za doseganje staranja s pomočjo WGAN modela, smo želeli najprej preizkusiti WGAN kot klasični pogojni generativni model. Želeli smo, da bi mreža glede na vhodni šumni vektor ter oznako starosti ustvarila osebo, ki deluje dovolj stara. 
+Preizkusili smo dve standardni arhitekturi za obliko generatorja in diskriminatorja. 
+Prva arhitektura je bila konvolucijska in je sledila predlogom iz \cite{radford2015unsupervised}. 
+Želeli smo mrežo najprej preizkusiti na enostaven način, zato smo se odločili za velikost slike \textbf{64x64} slikovnih točk ter za enokanalne slike. Vsakega od različnih modelov, smo učili za dolžino 20000 batchov. 
+\\ Pri konvolucijskem modelu, smo dobili dobili rezultate, ki so prikazani na sliki \ref{fig:cwgan-conv-results}. 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.5\textwidth]{images/cwgan_conv_results.png}
+ \caption[Rezultati učenja CWGAN mreže s konvolucijsko arhitekturo ]{Rezultati učenja CWGAN mreže z konvolucijsko arhitekturo}
+  \label{fig:cwgan-conv-results}
+\end{figure}
+Vidimo, da  je bila naša mreža učena na  učni množici obraznih slik, vendar rezultati niso sprejemljivi, saj so slike zamazane in polne artefaktov. Prav tako so starostni razredi slabo naučeni, saj večina obrazov na slikah na pogled ne pripada pravilni starostni skupini. 
+V sklopu učenja smo uporabljali \textbf{RMSProp} optimizator z nastavljeno hitrostjo učenja kot $0.0005$. Parameter rezanja je bil standardno nastavljen na (-1,1) ter $n_{kritik} =5 $. Velikost batch-a pa smo nastavili na $32$. Začetne uteži so bile inicializirane z vzorčenjem iz normalne porazdelitve. 
+Razlog za slab uspeh učenja lahko najdemo na grafu vrednosti kriterijske funkcije, ki je viden na sliki \ref{fig:cwgan-loss-graph}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.5\textwidth]{images/loss_graph_wgan_conv.png}
+ \caption[Kriterijska funkcija pri učenju konvolucijskega CWGAN modela ]{Kriterijska funkcija pri učenju konvolucijskega CWGAN modela}
+  \label{fig:cwgan-loss-graph}
+\end{figure}
+
+Opazimo, da nam diskriminator zelo hitro skonvergira v okolico ničle, vendar se nato tam ne ustali. V času učenja  skače po okolici, kar pomeni, da ne pride do nekih večjih vizualnih izboljšanj. Generator pa  na začetku učenja dobi izrazito negativno vrednost svoje kriterijske funkcije in se nato počasi približuje ničli, a se tudi on tam ne ustali. \\
+Da bi izboljšali rezultate, smo poskušali z empiričnim spreminjanjem hiperparametrov (hitrost učenja, $n_{kritik}$, velikost batch-a, število filtrov v konvolucijskih slojih ipd. Prav tako smo poskušali dodati Dropout sloj \cite{srivastava2014dropout} z različnimi parametri, vendar se rezultati niso vidno izboljšali. 
+\\
+Preizkusili smo tudi uporabo CWGAN arhitekture  s polnopovezanimi sloji, kjer generator s pomočjo zaporednih kaskadnih slojev iz vektorja šuma zgenerira sliko, diskriminator pa samo z uporabo le-teh presodi ali je slika prišla iz množice realnih podatkov ali ne. 
+\\Za začetek smo uporabili iste parametre za učenje kot pri konvolucijskem modelu, a smo žal dobili rezultate, ki so bili še manj kvalitetni. Po končanem učenju je večino slik vsebovalo le naključni šum, kar je vidno na sliki \ref{fig:cwgan-dense-imgs}. 
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.2\textwidth]{images/cwgan_dense_noise.png}
+ \caption[Vzorec generiranih slik pri CWGAN modelu s polnopovezanimi sloji]{Vzorec generiranih slik pri CWGAN modelu s polnopovezanimi sloji}
+  \label{fig:cwgan-dense-imgs}
+\end{figure}
 
 
-  
+Če pogledamo potek učenja na sliki \ref{fig:cwgan-dense-loss-graph},
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/cwgan_dense_loss_graph.png}
+ \caption[Kriterijska funkcija pri učenju CWGAN modela s polnopovezanimi sloji ]{Kriterijska funkcija pri učenju CWGAN modela s polnopovezanimi sloji}
+  \label{fig:cwgan-dense-loss-graph}
+\end{figure}
+lahko vidimo da je v tem primeru diskriminator zelo hitro skonvergiral proti optimalni vrednosti 0, medtem ko kriterijska funkcija generatorja ni skonvergirala. To nam lepo prikaže najbolj klasično težavo pri učenju GAN-ov  in sicer neravnovesje v moči med diskriminatorjem  $D$  in generatorjem $G$. V tem primeru je $D$ postal tako dober, da ga $G$, ni znal prelisičiti in medsebojno učenje ni bilo uspešno. Poskusili smo z empiričnim spreminjanjem parametrov, da bi izboljšali rezultate učenja, vendar nam to ni uspela. 
+
+\subsection{BiCOGAN}
+\subsubsection{Teoretično ozadje}
+Klasični GAN modeli nam omogočijo dobiti preslikavo iz prostora šuma $z$ v prostor generiranih podatkov $x$, vendar v procesu očenja žal ne dobimo obratne preslikave $x \mapsto z$, kar je v določenih primerih zaželjeno, saj nam omogoča dobiti kompaktno reprezentacijo naše informacije $x$. 
+\\
+Rešitev tega problema je model, ki  pogojno generativno nasprotniško mrežo poveže z enkoderjem. ki je zadolžen za določanje inverzne preslikave \cite{jaiswal2017bidirectional}. Velja \cite{donahue2016adversarial}, da v idealnem primeru morata biti $G$ in $E$ inverzna, da lahko prelisičita diskriminator $D$.
+\\
+V tem primeru primeru se GAN enačba, zapisana v \ref{eq:gan-main} spremeni v
+$$ \min_{G}  \max_{D} V(D,G) = \mathbb{E}_{x \sim p_{data}(x)}[\log{D(x,c)}] + \mathbb{E}_{z \sim p_{\tilde{z}}(\tilde{z})}[\log{(1-D(G(\tilde{z},c))}]$$
+\\
+Nas so take mreže zanimale zato, saj bi lahko postopek iz \cite{antipov2017face} poenstovali tako, da bi bila potrebna uporaba samo ene nevronske mreže. Pri omenjenem pristopu, so za določanje preslikave iz prostora slik v prostor latentnih vektorjev, uporabili dodatno nevronsko mrežo, kar pa zahteva izgradnjo dodatnega modela ter učenja, ki je ločen od generiranja slik. 
+\\
+Želja je bila, da bi z uporabo dvosmernega učenja, hkrati učili tako generator in diskriminator kot tudi enkoder. 
+Idejno arhitekturo naše mreže v shematski obliki vidimo na \ref{fig:bicogan-archi}. 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.7\textwidth]{images/bicogan_shema.png}
+ \caption[Idejna zasnova BICOGAN arhitekture, vir: \cite{jaiswal2017bidirectional} ]{Idejna zasnova BICOGAN arhitekture.Vir:\cite{jaiswal2017bidirectional} }
+  \label{fig:bicogan-archi}
+\end{figure}
+
+Če se nanašamo na oznake, definirane v poglavju o navadnih GAN mrežah, 
+potem formalno rečemo, da se generator nauči preslikavo $G(\tilde{z},\theta_G)$ iz porazdelitvne $p_{\tilde{z}}$, kjer je $\tilde{z} = [z \text{ } c]$ v 
+porazdelitev $p_G$, kjer je glavni cilj da se $p_G$ in $p_{data}$ čim manj razlikujeta.  Naloga enkoderja $E(x;\theta_E)$ je da slika iz $p_{data}$ v $p_{E}$, kjer želimo da je $p_E$ čim bližje $p_{\tilde{z}}$. Diskriminator  se odloča o avtentičnosti vzorca glede na  $D(\tilde{z},G(\tilde{z});\theta_D)$ in $D(E(x),x;\theta_D)$. 
+\\ V splošnem primeru BICOGAN modela  se mora enkoder  naučiti inverzni preslikavo iz $x$ v $z$ \textbf{in} $c$. Ker pa  je to v našem primeru nepotrebno, smo naš model spremenili tako, da je informacija o oznaki $c$ enkoderju vedno podana. 
+\subsubsection{Eksperimentalni rezultati}
+
+Poizkusili smo z implementacijo BICOGAN modela v orodju Keras. Kot najenostavnejšo obliko smo za vse tri notranje mreže (diskriminator, generator, enkoder) uporabili polnopovezano arhitekturo. Rezultati, ki smo jih dobili so prikazali solidne vizualne rezultate s strani generatorja, vendar je do težav prišlo pri enkoderju. Ni nam uspelo, da bi se enkoder pravilno naučil preslikave iz $x$ v $z$. Veljati bi namreč moralo, $G(E(x)) \sim  x$, že na prvi pogled pa je očitno, da to ni uspelo. 
+\\
+Še ena od težav je, da arhitektura s polnopovezanimi sloji generira slike, ki so polne šume in zatorej precej različne od realnih podatkov. 
+TBC... 
+
+
 
 %
 %\section{Uvod}

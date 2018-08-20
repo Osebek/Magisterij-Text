@@ -9,6 +9,11 @@ G.~Antipov, M.~Baccouche in J.-L. Dugelay, \emph{Face aging with conditional
   generative adversarial networks}, v: Image Processing (ICIP), 2017 IEEE
   International Conference on, IEEE, 2017, str. 2089--2093.
 
+\bibitem{arjovsky2017wasserstein}
+M.~Arjovsky, S.~Chintala in L.~Bottou, \emph{Wasserstein generative adversarial
+  networks}, v: International Conference on Machine Learning, 2017, str.
+  214--223.
+
 \bibitem{cootes2001active}
 T.~F. Cootes, G.~J. Edwards in C.~J. Taylor, \emph{Active appearance models},
   IEEE Transactions on Pattern Analysis \& Machine Intelligence (6) (2001)
@@ -17,6 +22,10 @@ T.~F. Cootes, G.~J. Edwards in C.~J. Taylor, \emph{Active appearance models},
 \bibitem{cootes1995active}
 T.~F. Cootes in~dr., \emph{Active shape models-their training and application},
   Computer vision and image understanding \textbf{61}(1) (1995) 38--59.
+
+\bibitem{donahue2016adversarial}
+J.~Donahue, P.~Kr{\"a}henb{\"u}hl in T.~Darrell, \emph{Adversarial feature
+  learning}, arXiv preprint arXiv:1605.09782  (2016).
 
 \bibitem{fu2010age}
 Y.~Fu, G.~Guo in T.~S. Huang, \emph{Age synthesis and estimation via faces: A
@@ -32,6 +41,10 @@ Y.~Fu in N.~Zheng, \emph{M-face: An appearance-based photorealistic model for
 I.~Goodfellow in~dr., \emph{Generative adversarial nets}, v: Advances in Neural
   Information Processing Systems 27 (ur. Z.~Ghahramani in~dr.), Curran
   Associates, Inc., 2014, str. 2672--2680.
+
+\bibitem{jaiswal2017bidirectional}
+A.~Jaiswal in~dr., \emph{Bidirectional conditional generative adversarial
+  networks}, arXiv preprint arXiv:1711.07461  (2017).
 
 \bibitem{kingma2013auto}
 D.~P. Kingma in M.~Welling, \emph{Auto-encoding variational bayes}, arXiv
@@ -49,5 +62,10 @@ A.~Makhzani in~dr., \emph{Adversarial autoencoders}, v: International
 A.~Radford, L.~Metz in S.~Chintala, \emph{Unsupervised representation learning
   with deep convolutional generative adversarial networks}, arXiv preprint
   arXiv:1511.06434  (2015).
+
+\bibitem{srivastava2014dropout}
+N.~Srivastava in~dr., \emph{Dropout: a simple way to prevent neural networks
+  from overfitting}, The Journal of Machine Learning Research \textbf{15}(1)
+  (2014) 1929--1958.
 
 \end{thebibliography}
